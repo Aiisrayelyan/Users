@@ -6,24 +6,28 @@ export const Signup = ({ onSignup, users }) => {
 
     const handleSubmit = e => {
         e.preventDefault();
-        
+
         if (!user.id.trim() || !user.name.trim() || !user.surname.trim() || !user.login.trim() || !user.password.trim()) {
             return setMessage({ text: "All fields must be filled", type: "error" });
         }
-        
+
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(user.login)) {
             return setMessage({ text: "Login field must contain a valid email", type: "error" });
         }
-        
+
+        if (users.some(existingUser => existingUser.id === parseInt(user.id))) {
+            return setMessage({ text: "ID is already in use", type: "error" });
+        }
+
         if (users.some(existingUser => existingUser.login === user.login)) {
             return setMessage({ text: "Login is already in use", type: "error" });
         }
-        
+
         if (user.password.length < 6) {
             return setMessage({ text: "Password should be at least 6 characters long", type: "error" });
         }
-        
+
         onSignup({ ...user, id: parseInt(user.id) });
         setUser({ id: "", name: "", surname: "", login: "", password: "" });
         setMessage({ text: "User added successfully", type: "success" });
